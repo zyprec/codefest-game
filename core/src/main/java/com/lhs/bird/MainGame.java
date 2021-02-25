@@ -26,6 +26,7 @@ import org.mini2Dx.core.game.BasicGame;
 import org.mini2Dx.core.geom.Rectangle;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
+import org.mini2Dx.core.graphics.SpriteSheet;
 import org.mini2Dx.core.graphics.viewport.FitViewport;
 
 public class MainGame extends BasicGame {
@@ -53,6 +54,7 @@ public class MainGame extends BasicGame {
   private GameState state = GameState.MAIN_MENU;
 
   private ArrayList<Obstacle> obstacles;
+  private SpriteSheet playerAnimation;
   private boolean gameInit;
   private Player player;
   private long startTime;
@@ -123,6 +125,8 @@ public class MainGame extends BasicGame {
         updateBackground();
         updatePlayer();
         updateObstacles();
+        int tenths = (int)(TimeUtils.timeSinceMillis(startTime)/100f);
+        player.sprite = playerAnimation.getSprite(tenths % 6);
         int secondsPassed = (int)(TimeUtils.timeSinceMillis(startTime)/1000f);
         if(secondsPassed % 2 == 1 && lastSpawned < secondsPassed){
           lastSpawned = secondsPassed;
@@ -199,6 +203,15 @@ public class MainGame extends BasicGame {
           for(int i = 10; i <= 12; i++){
             background.get(i).setX(background.get(i-1).getX()+606);
           }
+
+          playerAnimation = new SpriteSheet(manager.get("testbird-Sheet.png", Texture.class), 348, 354);
+          for(int i = 0; i < playerAnimation.getTotalFrames(); i++){
+            playerAnimation.getSprite(i).setSize(100, 100);
+          }
+          player = new Player(200f, 360f, playerAnimation.getSprite(0));
+          collisions = new RegionQuadTree<CollisionBox>(100, 0, 0, gameWidth * 2, gameHeight);
+          collisions.add(player.getHitbox());
+
           heart.setSize(30, 30);
           for(int i = 0; i < mainGameUI.size(); i++){
             if(mainGameUI.get(i).ID == 0){
@@ -382,7 +395,6 @@ public class MainGame extends BasicGame {
   private void InitializeGame(){
     obstacles = new ArrayList<Obstacle>();
     background = new ArrayList<Object>();
-    player = new Player(0f, 0f, new Sprite(new Texture(Gdx.files.internal("mini2Dx.png"))));
     manager.load("obstacle/Crate.png", Texture.class);
     manager.load("Heart.png", Texture.class);
     manager.load("EmptyHeart.png", Texture.class);
@@ -393,10 +405,9 @@ public class MainGame extends BasicGame {
     manager.load("Background_3.png", Texture.class);
     manager.load("background_2.png", Texture.class);
     manager.load("tree.png", Texture.class);
+    manager.load("testbird-Sheet.png", Texture.class);
     startTime = TimeUtils.millis();
     hitTime = 0;
-    collisions = new RegionQuadTree<CollisionBox>(100, 0, 0, gameWidth * 2, gameHeight);
-    collisions.add(player.getHitbox());
     gameInit = true;
   }
 
@@ -404,8 +415,8 @@ public class MainGame extends BasicGame {
     lastSpawned = 0;
     collisions.clear();
     obstacles.clear();
-    player.setX(0);
-    player.setY(0);
+    player.setX(200);
+    player.setY(360);
     player.setLives(3);
     startTime = TimeUtils.millis();
   }

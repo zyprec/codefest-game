@@ -1,7 +1,5 @@
 package com.lhs.bird;
 
-import java.util.Scanner;
-
 import org.mini2Dx.core.graphics.Sprite;
 
 public class Player extends Object {
