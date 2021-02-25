@@ -1,29 +1,64 @@
 package com.lhs.bird;
 
-import java.util.ArrayList;
-
 import org.mini2Dx.core.engine.geom.CollisionBox;
 import org.mini2Dx.core.graphics.Sprite;
 
 public class Object {
-    private int x, y;
-    private Sprite sprite;
-    private CollisionBox hitbox;
-    private ArrayList<Object> collided;
+    public float x, y;
+    public float[] speed;
+    public Sprite sprite;
+    public CollisionBox hitbox;
+    public int ID;
 
-    public Object(int _x, int _y, Sprite _sprite){
+    public Object(float _x, float _y, Sprite _sprite){
+        speed = new float[2];
         sprite = _sprite;
         x = _x;
         y = _y;
         hitbox = new CollisionBox(x, y, sprite.getWidth(), sprite.getHeight());
     }
+    public Object(float _x, float _y, Sprite _sprite, float width, float height, float speedX){
+        speed = new float[2];
+        speed[0] = speedX;
+        sprite = _sprite;
+        this.sprite.setSize(width, height);;
+        x = _x;
+        y = _y;
+        hitbox = new CollisionBox(x, y, width, height);
+    }
 
-    public int getX(){
+    public Object(float _x, float _y, Sprite _sprite, int ID){
+        speed = new float[2];
+        sprite = _sprite;
+        x = _x;
+        y = _y;
+        if(sprite != null){
+            hitbox = new CollisionBox(x, y, sprite.getWidth(), sprite.getHeight());
+        }
+    }
+
+    public float getX(){
         return this.x;
     }
 
-    public int getY(){
+    public float getMaxX(){
+        return this.x + this.hitbox.getWidth();
+    }
+
+    public void setX(float value){
+        this.x = value;
+    }
+
+    public float getY(){
         return this.y;
+    }
+
+    public float getMaxY(){
+        return this.hitbox.getMaxY();
+    }
+
+    public void setY(float value){
+        this.y = value;
     }
 
     public Sprite getSprite(){
@@ -34,19 +69,12 @@ public class Object {
         return this.hitbox;
     }
 
-    public void addCollided(Object object){
-        collided.add(object);
+    public void preUpdate(){
+        this.hitbox.preUpdate();
     }
 
-    public void removeCollided(Object object){
-        if (collided.remove(object)){
-            System.out.print("removed");
-        } else {
-            System.out.print("error");
-        }
-    }
-
-    public boolean isCollided(Object object){
-        return collided.contains(object);
+    public void updateLocation(){
+        this.x += this.speed[0];
+        this.y += this.speed[1];
     }
 }

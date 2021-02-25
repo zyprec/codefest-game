@@ -5,5 +5,6 @@ public enum GameState {
     LOADING_SCREEN,
     SETTINGS,
     PAUSED,
-    MAIN_GAME
+    MAIN_GAME,
+    GAME_LOST
 }
